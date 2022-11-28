@@ -51,12 +51,6 @@ app.post('/api/notes', (req, res)=>{
             })
 
         })
-
-        // fs.appendFile('./db/db.json', noteString, function(err){
-        //     if(err){console.log(err)}
-        //     res.json(`New Note has been added to JSON file`);
-        // })
- 
     }
     //returns when missing title or text
     else{
