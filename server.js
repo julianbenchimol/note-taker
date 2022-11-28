@@ -6,7 +6,7 @@ const path = require('path');
 const app = express();
 const db = require('./db/db.json');
 const fs = require('fs')
-
+const { v4: uuidv4 } = require('uuid');
 const PORT = 3001;
 
 app.use(express.static('public'));
@@ -34,7 +34,10 @@ app.post('/api/notes', (req, res)=>{
     //checks if note has title and body text
     if(title && text){
         const {title, text} = req.body;
-        const newNote = {title, text};
+        const newNote = {title,
+                        text,
+                        noteId: uuidv4()
+                    };
 
         const noteString  = JSON.stringify(newNote);
 
