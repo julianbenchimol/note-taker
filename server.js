@@ -1,8 +1,11 @@
 const { urlencoded } = require('express');
 const express = require('express');
+const { json, type } = require('express/lib/response');
+const { fstat } = require('fs');
 const path = require('path');
 const app = express();
 const db = require('./db/db.json');
+const fs = require('fs')
 
 const PORT = 3001;
 
@@ -23,20 +26,44 @@ app.get('/notes', (req, res)=>{
 app.get('/api/notes', (req,res)=>{
     res.json(db);
 })
+
 //Post Route
 app.post('/api/notes', (req, res)=>{
-    console.info(`${req.method} request recieved to add a new note`);
-    const response = req.body;
-    if(response.title && response.text){
-        res.json(`${response.title} note has been added \n Note Text: ${response.text}`);
+    const {title, text} = req.body;
+
+    //checks if note has title and body text
+    if(title && text){
+        const {title, text} = req.body;
+        const newNote = {title, text};
+
+        const noteString  = JSON.stringify(newNote);
+
+        fs.readFile('./db/db.json', 'utf8', function(error, data){
+            if(error){throw error}
+
+            let dataArray = JSON.parse(data);
+            dataArray.push(newNote);
+            dataArray = JSON.stringify(dataArray);
+
+            fs.writeFile('./db/db.json', `${dataArray}\n`, (err)=>{
+                if(err){throw err}
+                res.json(`New Note added`);
+            })
+
+        })
+
+        // fs.appendFile('./db/db.json', noteString, function(err){
+        //     if(err){console.log(err)}
+        //     res.json(`New Note has been added to JSON file`);
+        // })
+ 
     }
+    //returns when missing title or text
     else{
         res.json('Note needs a title and a body text!');
     }
-
-    console.log(response);
 })
 
 app.listen(PORT, () =>
-  console.log(`Example app listening at http://localhost:${PORT}`)
+  console.log(`Example app listening at ${PORT}`)
 );
