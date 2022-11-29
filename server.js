@@ -15,7 +15,7 @@ app.use(express.urlencoded({ extended: true }));
 
 //HTML Routes
 app.get('/', (req, res)=>{
-    res.sendFile(path.join(__dirname, 'index.html'));
+    res.sendFile(path.join(__dirname, './public/index.html'));
 })
 
 app.get('/notes', (req, res)=>{
@@ -38,8 +38,6 @@ app.post('/api/notes', (req, res)=>{
                         text,
                         noteId: uuidv4()
                     };
-
-        const noteString  = JSON.stringify(newNote);
 
         fs.readFile('./db/db.json', 'utf8', function(error, data){
             if(error){throw error}
